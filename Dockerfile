@@ -19,7 +19,8 @@ RUN ./mvnw -B -DskipTests package
 
 # adjust jar name if different
 ARG JAR_FILE=target/*.jar
-COPY ${JAR_FILE} app.jar
+
+COPY --from=build /app/target/*.jar app.jar
 
 EXPOSE 8080
 
