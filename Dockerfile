@@ -1,12 +1,27 @@
-# Use Java 17
-FROM openjdk:17-jdk-slim
+# Use a small JDK image
+FROM eclipse-temurin:17-jdk-jammy
 
-# Copy project files
 WORKDIR /app
-COPY . .
 
-# Build the project
-RUN ./mvnw -DskipTests package
+# copy maven wrapper and pom first for caching dependencies
+COPY mvnw .
+COPY .mvn .mvn
+COPY pom.xml .
 
-# Run the jar
-CMD ["java", "-jar", "target/moodtracker-0.0.1-SNAPSHOT.jar"]
+# download dependencies (cached)
+RUN chmod +x ./mvnw && ./mvnw -B -DskipTests dependency:go-offline
+
+# copy source
+COPY src ./src
+
+# package the app
+RUN ./mvnw -B -DskipTests package
+
+# adjust jar name if different
+ARG JAR_FILE=target/*.jar
+COPY ${JAR_FILE} app.jar
+
+EXPOSE 8080
+
+ENTRYPOINT ["java","-jar","/app.jar"]
+
