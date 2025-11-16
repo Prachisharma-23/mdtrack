@@ -1,28 +1,26 @@
-# Use a small JDK image
-FROM eclipse-temurin:17-jdk-jammy
+# ====== BUILD STAGE ======
+FROM eclipse-temurin:17-jdk AS build
 
 WORKDIR /app
 
-# copy maven wrapper and pom first for caching dependencies
-COPY mvnw .
-COPY .mvn .mvn
-COPY pom.xml .
+# Copy everything
+COPY . .
 
-# download dependencies (cached)
-RUN chmod +x ./mvnw && ./mvnw -B -DskipTests dependency:go-offline
+# Give execute permissions
+RUN chmod +x mvnw
 
-# copy source
-COPY src ./src
-
-# package the app
+# Build the jar
 RUN ./mvnw -B -DskipTests package
 
-# adjust jar name if different
-ARG JAR_FILE=target/*.jar
 
+# ====== RUN STAGE ======
+FROM eclipse-temurin:17-jre
+
+WORKDIR /app
+
+# Copy jar from build stage
 COPY --from=build /app/target/*.jar app.jar
 
 EXPOSE 8080
 
-ENTRYPOINT ["java","-jar","/app.jar"]
-
+ENTRYPOINT ["java", "-jar", "app.jar"]
