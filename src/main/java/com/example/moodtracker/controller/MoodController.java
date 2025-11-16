@@ -15,7 +15,7 @@ import com.example.moodtracker.service.MoodService;
 
 @RestController
 @RequestMapping("/api/moods")
-@CrossOrigin(origins = "http://localhost:3000")
+@CrossOrigin(origins = "https://mood-tracker-psi-ecru.vercel.app")
 public class MoodController {
 
     private final MoodService service;
