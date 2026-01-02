@@ -6,5 +6,6 @@ import lombok.Data;
 public class MoodRequest {
     private String mood;
     private String note;
+    private Long userId;
     
 }
