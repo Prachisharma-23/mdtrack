@@ -11,7 +11,7 @@ import com.example.moodtracker.repository.UserRepository;
 
 @RestController
 @RequestMapping("/api/auth")
-@CrossOrigin(origins = "http://localhost:3000")
+@CrossOrigin(origins = "https://mood-tracker-psi-ecru.vercel.app/")
 public class AuthController {
 
     private final UserRepository userRepository;
